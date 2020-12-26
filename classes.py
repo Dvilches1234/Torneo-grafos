@@ -3,9 +3,13 @@ class Team:
     def __init__(self, name, rank):
         self.name = name
         self.rank = rank
+        self.lives = 2
     
     def getName(self):
         return self.name
+
+    def lose(self):
+        self.lives -= 1;
 
 #en bracket estarán 2 objetos tipo Team, correspondiente a cada equipo
 class Bracket:
@@ -16,8 +20,15 @@ class Bracket:
 
     #muestra los equipos del bracket
     def showTeams(self):
-        print(self.team1.getName())    
-        print(self.team2.getName())
+        if self.team1 != None and self.team2 != None:
+            print(self.team1.getName())    
+            print(self.team2.getName())
+        elif self.team1 == None and self.team2 != None:     
+            print("team1 is null")
+        elif self.team1 != None and self.team2 == None:
+            print("team2 is null")
+        elif self.team1 == None and self.team2 == None:
+            print("bracket empty")
         print("-------------------")
     
     def setTeam1(self, team1):
@@ -36,6 +47,7 @@ class Bracket:
             return self.team1
         elif team == self.team2.getName():
             return self.team2
+            
     
     def getTeam1(self):
         return self.team1
@@ -48,6 +60,7 @@ class Bracket:
         else:
             return True
 
+
 #Este es un poco mas engorroso
 #El torneo tiene 2 atributos, una matriz y un entero "fase"
 #Fase está relacionado con los "niveles" que tiene el torneo, si son 8 participantes, tiene 3, si son 16, participantes 4 y asi
@@ -58,7 +71,7 @@ class Tournament:
     def __init__(self, tournament_size):
         bracket_size = tournament_size/2
         tournament = []
-        while bracket_size >1:
+        while bracket_size >=1:
             bracket = Bracket()
             brackets = []
             for i in range(int(bracket_size)):
@@ -68,6 +81,7 @@ class Tournament:
             bracket_size /= 2
         self.tournament = tournament
         self.fase = 0
+
 
     def addInitialTeam(self, team):
         i=0
@@ -97,16 +111,24 @@ class Tournament:
     #en este metodo se van pidiendo los resultados de las partidas para ir creando el bracket siguiente
     #la parte de los perdedores aun es wip
     def getResults(self):
-        next_bracket_position = 0
+        bracket_position = 0
         for bracket in self.tournament[self.fase]:
             bracket.showTeams()    
-            winner = input("who is the winner of bracket" + str(next_bracket_position)+ "? ")
-            if self.tournament[self.fase + 1][next_bracket_position].getTeam1 == None:
-                self.tournament[self.fase + 1][next_bracket_position].setTeam1(bracket.getWinner(winner))
-            elif self.tournament[self.fase + 1][next_bracket_position].getTeam2 == None:
-                self.tournament[self.fase + 1][next_bracket_position].setTeam2(bracket.getWinner(winner))
-                next_bracket_position += 1
-        self.fase +=1
+            winner = str(input("who is the winner of bracket " + str(bracket_position)+ "? "))
+            print(winner)
+            print(self.tournament[self.fase + 1][bracket_position].getTeam1())
+            print(self.tournament[self.fase + 1][bracket_position].getTeam2())
+            if self.tournament[self.fase + 1][bracket_position].getTeam1() == None:
+                self.tournament[self.fase + 1][bracket_position].setTeam1(bracket.getWinner(winner))
+                print(str(bracket.getWinner(winner)) + "Select for bracket " + str(bracket_position))
+            elif self.tournament[self.fase + 1][bracket_position].getTeam2() == None:
+                self.tournament[self.fase + 1][bracket_position].setTeam2(bracket.getWinner(winner))
+                print(str(bracket.getWinner(winner)) + "Select for bracket " + str(bracket_position))
+                self.tournament[self.fase +1][bracket_position].showTeams()
+                bracket_position += 1                    
+            else:
+                print("no team selected")
+        self.fase += 1
 
     def checkFullBrackets(self):
         i = 0
@@ -119,6 +141,9 @@ class Tournament:
                 elif bracket.getTeam2() == None:
                     print("Bracket " + str(i) + " no teamB")
             i+=1
+
+    def changeFase(self):
+        self.fase += 1
 
 
     

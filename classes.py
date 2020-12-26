@@ -41,6 +41,12 @@ class Bracket:
         return self.team1
     def getTeam2(self):
         return self.team2
+    
+    def isFull(self):
+        if(self.team1 == None or self.team2 == None):
+            return False
+        else:
+            return True
 
 #Este es un poco mas engorroso
 #El torneo tiene 2 atributos, una matriz y un entero "fase"
@@ -54,21 +60,32 @@ class Tournament:
         tournament = []
         while bracket_size >1:
             bracket = Bracket()
-            brackets = [bracket] * bracket_size
+            brackets = []
+            for i in range(int(bracket_size)):
+                bracket = Bracket()
+                brackets.append(bracket)
             tournament.append(brackets)
             bracket_size /= 2
         self.tournament = tournament
         self.fase = 0
-    
-    #funcion para rellenar los brackets iniciales
-    def addInitialBracket(self, team1, team2):
-        for bracket in self.tournament:
-            if bracket.getTeam1() == None and bracket.getTeam2() == None:
-                bracket.setTeams(team1, team2)
-                break
+
+    def addInitialTeam(self, team):
+        i=0
+        for bracket in self.tournament[self.fase]:                  
+            i+=1
+            if bracket.getTeam1() == None:                    
+                print("lets add " + team.getName())
+                bracket.setTeam1(team)
+                return
+            elif bracket.getTeam2() == None:
+                print("lets add " + team.getName())
+                bracket.setTeam2(team)                    
+                return        
+
 
     #muestra los brackets en los que se esté
     def showBrackets(self):
+        print("FASE: " + str(self.fase))
         print("----- Winner Brackets------")    
         print("--------------------------")    
         for bracket in self.tournament[self.fase]:
@@ -83,12 +100,25 @@ class Tournament:
         next_bracket_position = 0
         for bracket in self.tournament[self.fase]:
             bracket.showTeams()    
-            winner = input("who is the winner? ")
+            winner = input("who is the winner of bracket" + str(next_bracket_position)+ "? ")
             if self.tournament[self.fase + 1][next_bracket_position].getTeam1 == None:
                 self.tournament[self.fase + 1][next_bracket_position].setTeam1(bracket.getWinner(winner))
             elif self.tournament[self.fase + 1][next_bracket_position].getTeam2 == None:
                 self.tournament[self.fase + 1][next_bracket_position].setTeam2(bracket.getWinner(winner))
                 next_bracket_position += 1
+        self.fase +=1
+
+    def checkFullBrackets(self):
+        i = 0
+        for bracket in self.tournament[self.fase]:
+            if bracket.isFull():
+                print("Bracket " + str(i)+ " full")
+            else:
+                if bracket.getTeam1() == None:
+                    print("Bracket " + str(i) + " no teamA or teamB")
+                elif bracket.getTeam2() == None:
+                    print("Bracket " + str(i) + " no teamB")
+            i+=1
 
 
     

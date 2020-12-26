@@ -1,8 +1,17 @@
-#en team, se guardará el nombre y el ranking del equipo
-class Team:
+class Player:
     def __init__(self, name, rank):
         self.name = name
         self.rank = rank
+
+    def getRank(self):
+        return self.rank
+
+#en team, se guardará el nombre y el ranking del equipo
+class Team:
+    def __init__(self, name):
+        self.name = name
+        self.rank = 0
+        self.members = []
         self.lives = 2
     
     def getName(self):
@@ -10,7 +19,16 @@ class Team:
 
     def lose(self):
         self.lives -= 1;
-
+    
+    def addMember(self,player):
+        if len(self.members) < 5:
+            self.members.append(player)
+    
+    def calculateRank(self):
+        rank = 0
+        for member in self.members:
+            rank += member.getRank
+        self.rank = rank / len(self.members)
 #en bracket estarán 2 objetos tipo Team, correspondiente a cada equipo
 class Bracket:
 

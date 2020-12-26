@@ -2,6 +2,9 @@ import classes
 
 #se supone que aqui leeria el archivo participants y crearia los brackets iniciales
 #pero tambien esta wip
+
+
+
 def createTournament(contestantsFile):
     contestants =open(contestantsFile, "r")
     tournamentSize = contestants.readline()

@@ -43,10 +43,10 @@ class Bracket:
 
     #le das el nombre de un equipo y te devuelve el objeto Team corespondiente
     def getWinner(self, team):
-        if team == self.team1.getName():
+        if team == self.team1.getName():            
             return self.team1
-        elif team == self.team2.getName():
-            return self.team2
+        elif team == self.team2.getName():            
+            return self.team2           
             
     
     def getTeam1(self):
@@ -112,19 +112,16 @@ class Tournament:
     #la parte de los perdedores aun es wip
     def getResults(self):
         bracket_position = 0
+        print("Getting results of fase " + str(self.fase))
         for bracket in self.tournament[self.fase]:
             bracket.showTeams()    
             winner = str(input("who is the winner of bracket " + str(bracket_position)+ "? "))
-            print(winner)
-            print(self.tournament[self.fase + 1][bracket_position].getTeam1())
-            print(self.tournament[self.fase + 1][bracket_position].getTeam2())
-            if self.tournament[self.fase + 1][bracket_position].getTeam1() == None:
-                self.tournament[self.fase + 1][bracket_position].setTeam1(bracket.getWinner(winner))
-                print(str(bracket.getWinner(winner)) + "Select for bracket " + str(bracket_position))
+            
+            if self.tournament[self.fase + 1][bracket_position].getTeam1() == None:                
+                self.tournament[self.fase + 1][bracket_position].setTeam1(bracket.getWinner(winner))                
             elif self.tournament[self.fase + 1][bracket_position].getTeam2() == None:
-                self.tournament[self.fase + 1][bracket_position].setTeam2(bracket.getWinner(winner))
-                print(str(bracket.getWinner(winner)) + "Select for bracket " + str(bracket_position))
-                self.tournament[self.fase +1][bracket_position].showTeams()
+                self.tournament[self.fase + 1][bracket_position].setTeam2(bracket.getWinner(winner))                
+                self.tournament[self.fase +1][bracket_position].showTeams()                
                 bracket_position += 1                    
             else:
                 print("no team selected")

@@ -21,7 +21,10 @@ tournament = createTournament("participants")
 tournament.showBrackets()
 tournament.getResults()
 tournament.showBrackets()
-
+tournament.getResults()
+tournament.showBrackets()
+tournament.getResults()
+tournament.showBrackets()
 
              
 

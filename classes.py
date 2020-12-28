@@ -69,8 +69,14 @@ class Bracket:
         if team == self.team1.getName():            
             return self.team1
         elif team == self.team2.getName():            
-            return self.team2           
-            
+            return self.team2
+
+    #le das el nombre del equipo ganador y te devuelve el perdedor           
+    def getLoser(self, team):
+        if team == self.team1.getName():            
+            return self.team2
+        elif team == self.team2.getName():            
+            return self.team1
     
     def getTeam1(self):
         return self.team1
@@ -92,10 +98,18 @@ class Bracket:
 #si es un torneo de 8 equipos, tournament[0], tendría un arreglo de 4 brackets, tournament[1] tendría uno de 2 y asi
 class Tournament:    
     def __init__(self, tournament_size):
+        self.winnerSideWinner = None
+        self.loserSideWinner = None
         self.tournament_size = tournament_size
+        self.fase = 0
+        self.loserFase = 0
+        self.floors = 0
+        self.loserFloors = 0
+        self.winner = None
         bracket_size = tournament_size/2
         tournament = []
         while bracket_size >=1:
+            self.floors +=1
             bracket = Bracket()
             brackets = []
             for i in range(int(bracket_size)):
@@ -103,8 +117,23 @@ class Tournament:
                 brackets.append(bracket)
             tournament.append(brackets)
             bracket_size /= 2
+        self.intern = True  
+        self.invertion = True           
+        loserTournament = []
+        while bracket_size >=1:
+            self.loserFloors +=1
+            bracket = Bracket()
+            brackets = []
+            for i in range(int(bracket_size)):
+                bracket = Bracket()
+                brackets.append(bracket)
+            loserTournament.append(brackets)
+            self.intern = not self.intern
+            if not self.intern:
+                bracket_size /= 2
+        self.loserTournament = loserTournament 
         self.tournament = tournament
-        self.fase = 0
+        self.newLosers = []
 
     def getSize(self):
         return self.tournament_size
@@ -130,26 +159,78 @@ class Tournament:
             bracket.showTeams()    
         print("----- Loser Bracket------")    
         print("--------------------------")    
+        for bracket in self.loserTournament[self.loserFase]:
+            bracket.showTeams()    
         #wip   
     
     #en este metodo se van pidiendo los resultados de las partidas para ir creando el bracket siguiente
     #la parte de los perdedores aun es wip
-    def getResults(self):
+    def getWinnerResults(self):
         bracket_position = 0
-        print("Getting results of fase " + str(self.fase))
+        print("Getting results of fase " + str(self.fase) + "On winner side")        
+        
         for bracket in self.tournament[self.fase]:
             bracket.showTeams()    
-            winner = str(input("who is the winner of bracket " + str(bracket_position)+ "? "))
-            
-            if self.tournament[self.fase + 1][bracket_position].getTeam1() == None:                
-                self.tournament[self.fase + 1][bracket_position].setTeam1(bracket.getWinner(winner))                
+            winner = str(input("who is the winner of bracket " + str(bracket_position)+ "? "))            
+            self.newLosers.append(bracket.getLoser(winner))
+            if self.fase == self.floors:
+                self.winnerSideWinner = bracket.getWinner(winner) 
+            elif self.tournament[self.fase + 1][bracket_position].getTeam1() == None:                
+                self.tournament[self.fase + 1][bracket_position].setTeam1(bracket.getWinner(winner))                                
             elif self.tournament[self.fase + 1][bracket_position].getTeam2() == None:
                 self.tournament[self.fase + 1][bracket_position].setTeam2(bracket.getWinner(winner))                
-                self.tournament[self.fase +1][bracket_position].showTeams()                
+                self.tournament[self.fase +1][bracket_position].showTeams()                            
                 bracket_position += 1                    
             else:
-                print("no team selected")
+                print("no team selected")          
+
         self.fase += 1
+    
+    def addLosersToLosersBracket(self):
+        if not self.intern:
+            if self.invertion:
+                bracket = 0 
+                losers = list(reversed(self.newLosers))
+                for team in losers:
+                    self.loserTournament[self.loserFase][bracket].setTeam2(team)                
+                    bracket+=1
+            if not self.invertion and self.loserFase != 0:
+                bracket = 0 
+                for team in self.newLosers:
+                    if bracket%2 == 0:
+                        self.loserTournament[self.loserFase][bracket].setTeam2(team)                
+                    bracket+=1
+                for team in self.newLosers:
+                    if bracket%2 != 0:
+                        self.loserTournament[self.loserFase][bracket].setTeam2(team)                
+                    bracket+=1
+        
+    def getLoserResults(self):
+        bracket_position = 0
+        print("Getting results of fase " + str(self.loserFase) + "On loser side")        
+        if not self.intern:
+            for bracket in self.loserTournament[self.loserFase]:
+                bracket.showTeams()    
+                winner = str(input("who is the winner of bracket " + str(bracket_position)+ "? "))                            
+                if self.loserFase == self.LoserFloors:
+                    self.loserSideWinner = bracket.getWinner(winner) 
+                elif self.loserTournament[self.loserFase + 1][bracket_position].getTeam1() == None:                
+                    self.loserTournament[self.loserFase + 1][bracket_position].setTeam1(bracket.getWinner(winner))                                
+                elif self.loserTournament[self.loserFase + 1][bracket_position].getTeam2() == None:
+                    self.loserTournament[self.loserFase + 1][bracket_position].setTeam2(bracket.getWinner(winner))                                    
+                    bracket_position += 1                    
+                else:
+                    print("no team selected")        
+        else:
+            bracket_position = 0
+            for bracket in self.loserTournament[self.loserFase]:
+                bracket.showTeams()    
+                winner = str(input("who is the winner of bracket " + str(bracket_position)+ "? "))                                            
+                self.loserTournament[self.loserFase + 1][bracket_position].setTeam1(bracket.getWinner(winner))
+                bracket_position += 1            
+        self.loserFase += 1
+        self.intern != self.intern
+
 
     def checkFullBrackets(self):
         i = 0
@@ -162,6 +243,24 @@ class Tournament:
                 elif bracket.getTeam2() == None:
                     print("Bracket " + str(i) + " no teamB")
             i+=1
+    def finalMatches(self):
+        finalBracket = Bracket(self.winnerSideWinner, self.loserSideWinner)
+        finalBracket.showTeams()
+        winner = input("who is the winner of final match? ")
+        winnerTeam = finalBracket.getWinner(winner)
+        if winnerTeam == self.winnerSideWinner:
+            self.winner = self.winnerSideWinner
+
+        else:
+            winner = input("who is the winner of final re-match? ")
+            winnerTeam = finalBracket.getWinner(winner)
+            if winnerTeam == self.winnerSideWinner:
+                self.winner = self.winnerSideWinner
+            elif winnerTeam == self.loserSideWinner:
+                self.winner = self.loserSideWinner
+        print("the winner is " + winnerTeam.getName())
+
+
 
     def changeFase(self):
         self.fase += 1

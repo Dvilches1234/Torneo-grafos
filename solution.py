@@ -10,11 +10,11 @@ if option == 1:
     size = tournament.getSize()
     while size >=1:
         tournament.showBrackets()
-        tournament.getWinnerResults()
+        tournament.getResults()
 
 elif option == 2:
     tournament = functions.createTournamentFromRanking(shuffledRanking)
     size = tournament.getSize()
     while size >=1:
         tournament.showBrackets()
-        tournament.getWinnerResults()
+        tournament.getResults()

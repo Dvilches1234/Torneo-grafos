@@ -159,8 +159,8 @@ class Tournament:
             bracket.showTeams()    
         print("----- Loser Bracket------")    
         print("--------------------------")    
-        for bracket in self.loserTournament[self.loserFase]:
-            bracket.showTeams()    
+        ##for bracket in self.loserTournament[self.loserFase]:
+          ##  bracket.showTeams()    
         #wip   
     
     #en este metodo se van pidiendo los resultados de las partidas para ir creando el bracket siguiente

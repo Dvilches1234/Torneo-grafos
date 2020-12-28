@@ -17,6 +17,9 @@ class Team:
     def getName(self):
         return self.name
 
+    def getRank(self):
+        return self.rank
+
     def lose(self):
         self.lives -= 1;
     
@@ -27,8 +30,10 @@ class Team:
     def calculateRank(self):
         rank = 0
         for member in self.members:
-            rank += member.getRank
+            rank += member.getRank()
         self.rank = rank / len(self.members)
+
+        
 #en bracket estarán 2 objetos tipo Team, correspondiente a cada equipo
 class Bracket:
 
@@ -87,6 +92,7 @@ class Bracket:
 #si es un torneo de 8 equipos, tournament[0], tendría un arreglo de 4 brackets, tournament[1] tendría uno de 2 y asi
 class Tournament:    
     def __init__(self, tournament_size):
+        self.tournament_size = tournament_size
         bracket_size = tournament_size/2
         tournament = []
         while bracket_size >=1:
@@ -100,17 +106,17 @@ class Tournament:
         self.tournament = tournament
         self.fase = 0
 
+    def getSize(self):
+        return self.tournament_size
 
     def addInitialTeam(self, team):
         i=0
         for bracket in self.tournament[self.fase]:                  
             i+=1
-            if bracket.getTeam1() == None:                    
-                print("lets add " + team.getName())
+            if bracket.getTeam1() == None:         
                 bracket.setTeam1(team)
                 return
             elif bracket.getTeam2() == None:
-                print("lets add " + team.getName())
                 bracket.setTeam2(team)                    
                 return        
 
